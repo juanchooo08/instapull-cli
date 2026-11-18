@@ -1,0 +1,133 @@
+# Plantilla de configuracion. Copiala como config.yaml y editala.
+# InstaPull - configuracion
+# Los secretos NUNCA van aca. Se leen de variables de entorno:
+#   OPENROUTER_API_KEY, IG_USERNAME, IG_PASSWORD
+
+instagram:
+  # Nombre EXACTO de la coleccion de guardados a procesar
+  collection_name: "AI"
+  # Tope de elementos nuevos a procesar por corrida
+  max_items_per_run: 50
+  # Pausa aleatoria (min, max) en segundos entre peticiones a Instagram
+  request_delay_seconds: [4, 12]
+  # Reintentos con backoff exponencial ante errores transitorios
+  max_retries: 4
+  # Archivo donde se persiste la sesion (cookies)
+  session_file: "data/session/instaloader.session"
+
+ai:
+  # "claude-cli" usa la suscripcion de Claude (`claude -p`); "openrouter" usa la API paga
+  provider: "claude-cli"
+  claude_model: "haiku"
+  # Modelo primario (analiza imagenes y fotogramas)
+  model: "qwen/qwen3.7-flash"
+  # Se usa si el primario falla (429/5xx) o devuelve JSON invalido
+  model_fallback: "google/gemini-3.7-flash"
+  base_url: "https://openrouter.ai/api/v1"
+  max_tokens: 6000  # qwen y gemini razonan antes de responder; con 1500 la respuesta salia vacia
+  temperature: 0.2
+  # Reintentos de la llamada al modelo antes de pasar al fallback
+  max_retries: 3
+  timeout_seconds: 120
+
+media:
+  # Un fotograma cada N segundos de video
+  frame_interval_seconds: 3
+  # Tope de fotogramas enviados al modelo (muestreo uniforme si sobran)
+  max_frames_per_video: 12
+  # Modelo de faster-whisper: tiny / base / small / medium
+  whisper_model: "small"
+  whisper_device: "cpu"
+  whisper_compute_type: "int8"
+  # OCR sobre los fotogramas / imagenes
+  ocr_enabled: true
+  # Ancho maximo al que se redimensionan los fotogramas antes de enviarlos
+  frame_max_width: 1024
+  # Descargar el medio (si es false solo se usan metadatos)
+  download_media: true
+
+youtube:
+  # URL de TU playlist de YouTube con los videos de IA que quieres analizar.
+  # Puede ser privada o "no listada": yt-dlp la lee igual si la URL es la tuya
+  # y la playlist es publica/no listada. Las privadas requieren cookies.
+  playlist_url: ""
+  max_items_per_run: 10
+  # Los videos mas largos que esto se saltean
+  max_duration_minutes: 40
+  max_height: 480
+  # Si el video tiene subtitulos (propios o automaticos) se usan en vez de whisper
+  prefer_subs: true
+  sub_langs: ["es", "en"]
+  # Un fotograma cada N segundos: los videos de YouTube son largos
+  frame_interval_seconds: 30
+  max_frames_per_video: 12
+  download_timeout_seconds: 900
+
+links:
+  # Seguir redirecciones y descargar el contenido de destino
+  resolve_enabled: true
+  timeout_seconds: 20
+  max_links_per_item: 10
+  # Caracteres de texto del destino que se guardan como extracto
+  excerpt_chars: 2000
+
+comments:
+  # Interruptor maestro. La bandera --enable-comments tambien debe estar presente.
+  enabled: true
+  max_comments_per_run: 5
+  # Pausa aleatoria (min, max) en segundos entre acciones de escritura
+  action_delay_seconds: [60, 180]
+  # Tiempo maximo total de espera del DM, en segundos
+  dm_wait_max_seconds: 600
+  # Intervalos crecientes de sondeo del inbox
+  dm_poll_intervals: [30, 60, 120]
+  # Cuantas respuestas automaticas se permiten dentro del flujo del bot
+  dm_max_turns: 3
+  # Seguir al autor cuando el post o su bot condicionan el recurso a seguirlo.
+  # ACCION PUBLICA: los follows quedan visibles en la cuenta.
+  auto_follow: true
+  # Dar like cuando el post lo exige. Tambien es PUBLICA.
+  auto_like: true
+  # Guardar el post cuando lo exige. Privada: el autor no la ve.
+  auto_save: true
+  # Si el enlace ya esta en el caption, no comenta ni espera el DM.
+  # Es la via mas barata: sin acciones publicas y sin minutos de espera.
+  preferir_via_directa: true
+
+# Que herramientas ya tenes en tus propios proyectos (comando `instapull
+# inventario`). El catalogo las marca para no recomendarte lo que ya usas.
+inventory:
+  # Carpetas que contienen proyectos (un nivel de subcarpetas)
+  roots: []
+  # Carpetas de repos clonados, agrupados en dos niveles: skills/github/<repo>
+  repo_roots: []
+  # Los package.json dan muchas coincidencias utiles pero tambien ruido npm
+  incluir_dependencias: true
+
+output:
+  language: "es"
+  directory: "output"
+  data_directory: "data"
+  database: "data/instapull.db"
+  log_file: "logs/instapull.log"
+
+# Resumen diario por correo (comando `instapull digest`).
+# La clave va en el entorno: RESEND_API_KEY
+email:
+  # Interruptor maestro del envio
+  enabled: false
+  # Unico proveedor implementado
+  provider: "resend"
+  # Remitente verificado en Resend (ej: "InstaPull <avisos@tudominio.com>")
+  # onboarding@resend.dev funciona sin verificar dominio, pero SOLO puede
+  # escribirle al correo dueño de la cuenta de Resend.
+  from_address: "InstaPull <onboarding@resend.dev>"
+  to_address: ""   # tu correo
+  # Hora local a partir de la cual se manda el resumen del dia
+  send_hour: 9
+  # Tope de elementos por correo; el resto va en el digest siguiente
+  max_items: 25
+  # Adjuntar catalogo.html: el catalogo completo de herramientas, interactivo
+  attach_catalog: true
+  # Dias en los que una herramienta se muestra marcada como "nueva"
+  catalog_new_days: 7

@@ -1,0 +1,19 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Datos locales: sesion, medios descargados, base de datos, logs, informes
+data/
+logs/
+output/
+
+# Configuracion personal: se copia de config.example.yaml
+config.yaml
+config-todos.yaml
+
+# Script local con rutas propias
+ig-cookie.mjs

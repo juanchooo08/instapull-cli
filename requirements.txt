@@ -1,0 +1,41 @@
+# InstaPull - dependencias
+# IMPORTANTE: requiere Python 3.12 o 3.13 (ctranslate2 no publica wheels para 3.14)
+
+# CLI y configuracion
+# typer < 0.16 rompe con click >= 8.2 (Parameter.make_metavar cambio de firma)
+typer==0.27.1
+rich==13.9.4
+# instagrapi 2.18.x ya soporta pydantic 2.13
+pydantic==2.13.4
+PyYAML==6.0.2
+python-dotenv==1.0.1
+
+# Instagram
+# instagrapi < 2.18 recibe 467 "Unsupported" de la API privada (version de app vieja)
+instaloader==4.14.2
+instagrapi==2.18.16
+
+# HTTP / scraping de enlaces
+httpx==0.28.1
+beautifulsoup4==4.12.3
+
+# Media
+Pillow==12.3.0
+faster-whisper==1.1.1
+
+# OCR (motor ONNX local, no requiere instalar Tesseract)
+rapidocr-onnxruntime==1.4.4
+
+# YouTube (playlists propias)
+yt-dlp>=2025.1.1
+
+# IA
+openai==1.59.6
+
+# Logging
+structlog==24.4.0
+
+# Tests
+pytest==8.3.4
+pytest-mock==3.14.0
+respx==0.22.0
