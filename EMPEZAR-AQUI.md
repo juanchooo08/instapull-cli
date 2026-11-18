@@ -10,7 +10,10 @@ Al final te queda un catálogo que abrís en el navegador, y una planilla.
 
 ## No tenés que instalar nada vos
 
-Abrí **Claude Code** en la carpeta de este proyecto y mandale este mensaje:
+Si todavía no tenés la carpeta, abrí **Claude Code** en cualquier parte y pedile:
+"clonate `https://github.com/juanchooo08/instapull-cli` y entrá a esa carpeta".
+
+Ya con la carpeta abierta en **Claude Code**, mandale este mensaje:
 
 > Leé el archivo CLAUDE.md de este repo y dejá InstaPull funcionando. Yo no soy
 > programador: encargate vos de todo e indicame paso a paso lo que tengo que hacer con el
